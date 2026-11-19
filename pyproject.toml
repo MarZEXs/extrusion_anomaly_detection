@@ -5,10 +5,10 @@ requires-python = ">=3.14"
 dependencies = ["httpx>=0.28.1", "polars>=2.1.0", "tqdm>=4.66.5"]
 
 [project.optional-dependencies]
-cuda = ["torch", "torchvision", "torchcodec", "triton"]
+cuda = ["torch", "torchvision", "torchcodec"]
 rocm-gfx1032 = [
-  "torch[device-gfx1032]<2.14",
-  "torchvision[device-gfx1032],",
+  "torch[device-gfx1032]",
+  "torchvision[device-gfx1032]",
   "torchcodec",
   "triton",
   "amd-torch-device-gfx1032",
@@ -19,23 +19,27 @@ rocm-gfx1032 = [
   "rocm-sdk-core",
 ]
 
+[tool.uv]
+conflicts = [[{ extra = "cuda" }, { extra = "rocm-gfx1032" }]]
+
 [[tool.uv.index]]
 name = "cpu"
 url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [[tool.uv.index]]
 name = "rocm"
 url = "https://stable.repo.amd.com/rocm/whl-next/"
+explicit = true
 
 [tool.uv.sources]
-torch = { index = "rocm" }
-torchvision = { index = "rocm" }
-torchaudio = { index = "rocm" }
-triton = { index = "rocm" }
+torch = [{ index = "rocm", extra = "rocm-gfx1032" }]
+torchvision = [{ index = "rocm", extra = "rocm-gfx1032" }]
+torchcodec = [{ index = "cpu", extra = "rocm-gfx1032" }]
+triton = [{ index = "rocm", extra = "rocm-gfx1032" }]
 amd-torch-device-gfx1032 = { index = "rocm" }
 amd-torchvision-device-gfx1032 = { index = "rocm" }
 rocm-sdk-device-gfx1032 = { index = "rocm" }
 rocm-sdk-libraries = { index = "rocm" }
 rocm = { index = "rocm" }
 rocm-sdk-core = { index = "rocm" }
-torchcodec = { index = "cpu" }
