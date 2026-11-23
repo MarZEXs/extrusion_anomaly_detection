@@ -4,7 +4,6 @@ from typing import Literal
 import polars as pl
 from torch.utils.data import Dataset
 from torchcodec.decoders import decode_image
-from tqdm import tqdm
 
 
 class CaxtonDataset(Dataset):
@@ -13,7 +12,7 @@ class CaxtonDataset(Dataset):
         self.rows = self.df.to_dicts()
 
         self.parameter_columns = [
-            col for col in self.df.columns if col not in ("img_path")
+            col for col in self.df.columns if col not in "img_path"
         ]
 
     def __len__(self):
@@ -27,8 +26,3 @@ class CaxtonDataset(Dataset):
         parameters = {col: row[col] for col in self.parameter_columns}
 
         return image, parameters
-
-
-dataset = CaxtonDataset()
-for i, p in tqdm(dataset):
-    print(p)

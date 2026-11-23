@@ -2,6 +2,7 @@ from pathlib import Path
 
 import httpx
 from tqdm import tqdm
+
 # www.repository.cam.ac.uk/items/6d77cd6d-8569-4bf4-9d5f-311ad2a49ac8
 API = "https://api.repository.cam.ac.uk/server/api/core"
 ITEM = "6d77cd6d-8569-4bf4-9d5f-311ad2a49ac8"
@@ -21,7 +22,10 @@ def download(client, file, bar):
         bar.update(file["sizeBytes"])
         return
     bar.set_postfix_str(file["name"])
-    with client.stream("GET", file["_links"]["content"]["href"]) as r, path.open("wb") as f:
+    with (
+        client.stream("GET", file["_links"]["content"]["href"]) as r,
+        path.open("wb") as f,
+    ):
         r.raise_for_status()
         for chunk in r.iter_bytes():
             f.write(chunk)
@@ -32,7 +36,9 @@ def main():
     DEST.mkdir(parents=True, exist_ok=True)
     with httpx.Client(follow_redirects=True, timeout=60) as client:
         files = list_files(client)
-        with tqdm(total=sum(f["sizeBytes"] for f in files), unit="B", unit_scale=True) as bar:
+        with tqdm(
+            total=sum(f["sizeBytes"] for f in files), unit="B", unit_scale=True
+        ) as bar:
             for file in files:
                 download(client, file, bar)
 

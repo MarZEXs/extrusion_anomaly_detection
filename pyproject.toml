@@ -2,7 +2,16 @@
 name = "extrusion-anomaly-detection"
 version = "0.1.0"
 requires-python = ">=3.14"
-dependencies = ["httpx>=0.28.1", "polars>=2.1.0", "tqdm>=4.66.5"]
+dependencies = [
+  "httpx>=0.28.1",
+  "polars>=2.1.0",
+  "tqdm>=4.66.5",
+  "transformers>=5.24.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14"]
+build-backend = "uv_build"
 
 [project.optional-dependencies]
 cuda = ["torch", "torchvision", "torchcodec"]
